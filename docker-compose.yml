@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  django:
+    build: .  # Указываем путь к Dockerfile для Django
+    ports:
+      - "8000:8000"  # Пробрасываем порт 8000
+    volumes:
+      - .:/app  # Монтируем папку с кодом Django
+    environment:
+      - DJANGO_SETTINGS_MODULE=my_project.settings  # Указываем настройки Django
+    command: python manage.py runserver 0.0.0.0:8000
+
+  dash:
+    build: ./dash_app  # Указываем путь к Dockerfile для Dash
+    ports:
+      - "8051:8051"  # Пробрасываем порт 8050
+    volumes:
+      - ./dash_app:/dashapp  # Монтируем папку с кодом Dash
+    environment:
+      - DJANGO_API_URL=http://django:8000/  # Указываем URL Django API
+    depends_on:
+      - django  # Зависимость от Django-сервиса
